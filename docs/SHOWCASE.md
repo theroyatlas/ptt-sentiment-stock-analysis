@@ -76,7 +76,7 @@ NLP: Hugging Face Transformers (BERT)
 ✅ 統計檢定（卡方、Spearman、Bootstrap）
 
 技術棧：Python | Flask | Transformers | SQLite
-專案連結：https://github.com/RoyWG925/ptt-sentiment-stock-analysis
+專案連結：https://github.com/theroyatlas/ptt-sentiment-stock-analysis
 
 #NLP #MachineLearning #DataScience #Python
 ```
@@ -94,7 +94,7 @@ PTT Stock board sentiment and Taiwan stock market performance.
 - 📊 Statistical hypothesis testing
 - 📈 Real-time visualization
 
-[View Project →](https://github.com/RoyWG925/ptt-sentiment-stock-analysis)
+[View Project →](https://github.com/theroyatlas/ptt-sentiment-stock-analysis)
 ```
 
 ---

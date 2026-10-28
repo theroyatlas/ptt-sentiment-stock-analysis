@@ -83,6 +83,6 @@ A: 確認 `database/` 資料夾存在且有寫入權限
 
 ## 需要幫助？
 
-- 查看 [Issues](https://github.com/RoyWG925/ptt-sentiment-stock-analysis/issues)
+- 查看 [Issues](https://github.com/theroyatlas/ptt-sentiment-stock-analysis/issues)
 - 閱讀 [文件](docs/)
 - 聯絡作者

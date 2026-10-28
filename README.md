@@ -71,7 +71,7 @@ Three-person team project. Roles as listed in the thesis appendix (小組分工�
 
 | Member | Role |
 |---|---|
-| 王語揚 Roy Wang ([RoyWG925](https://github.com/RoyWG925)) | Data crawling, BERT model training, coding, statistical analysis |
+| 王語揚 Roy Wang ([theroyatlas](https://github.com/theroyatlas)) | Data crawling, BERT model training, coding, statistical analysis |
 | 呂筱婕 | Research design, charts, presentation and poster design |
 | 林峻霆 | Literature review, research framework, data annotation, conclusions and final integration |
 
@@ -319,7 +319,7 @@ MIT License。見 [LICENSE](LICENSE)。
   title = {事件驅動下的網路社群情緒與市場表現：以川普關稅政策期間之 PTT 股票版與台股加權指數為例},
   year = {2025},
   publisher = {GitHub},
-  url = {https://github.com/RoyWG925/ptt-sentiment-stock-analysis}
+  url = {https://github.com/theroyatlas/ptt-sentiment-stock-analysis}
 }
 ```
 
