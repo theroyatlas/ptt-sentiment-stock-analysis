@@ -31,6 +31,6 @@
   title = {事件驅動下的網路社群情緒與市場表現：以川普關稅政策期間之 PTT 股票版與台股加權指數為例},
   year = {2025},
   publisher = {GitHub},
-  url = {https://github.com/RoyWG925/ptt-sentiment-stock-analysis}
+  url = {https://github.com/theroyatlas/ptt-sentiment-stock-analysis}
 }
 ```
