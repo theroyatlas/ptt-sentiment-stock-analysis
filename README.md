@@ -38,6 +38,8 @@ National Taiwan Normal University undergraduate capstone (學習科學學士學�
 
 **How to run.** Databases matching `*.db` and CSV files are gitignored, so a fresh clone cannot rerun the market pipeline until those local files exist.
 
+**2026-11 離線工程驗證。** 乾淨 clone 現在可用 `run_pipeline.py --demo --output-dir <新目錄>` 跑合成資料，或用 `--check-only --db <本機資料庫> --stock-csv <本機股價檔>` 做不寫入結果的輸入檢查。安裝僅需 `requirements-offline.txt`，不需模型、爬蟲或 Web 套件；完整 Windows 操作與限制見 [離線重現說明](docs/offline-reproducibility.md)。這次僅驗證 synthetic（合成資料）程式流程，**未重驗原始私有資料，也沒有重現歷史研究分數**：0.683 仍有測試洩漏問題，45 筆 holdout 的 0.580 仍是小樣本結果。
+
 ```bash
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
@@ -296,7 +298,7 @@ MIT License。見 [LICENSE](LICENSE)。
 | 王語揚 | BERT 模型訓練、程式撰寫、資料爬蟲、統計分析 |
 | 呂筱婕 | 研究設計、圖表繪製、簡報與海報設計 |
 | 林峻霆 | 文獻探討、研究架構設計、數據標註、結論撰寫與統整 |
-- **聯絡方式**: jg971402@gmail.com
+- **聯絡方式**: [GitHub](https://github.com/theroyatlas)
 
 ---
 

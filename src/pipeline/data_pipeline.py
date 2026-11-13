@@ -1,10 +1,12 @@
 # 檔案名稱: data_pipeline.py
 import pandas as pd
 import numpy as np
-import sqlite3
 import os
 import re
+from pathlib import Path
 from dotenv import load_dotenv
+from src.pipeline.input_validation import read_predictions, read_stock, validate_predictions
+from src.pipeline.output_safety import write_new_outputs
 
 # 載入環境變數
 load_dotenv()
@@ -22,22 +24,24 @@ ALL_DATES = pd.date_range('2025-03-27', '2025-04-16')
 
 def fix_timestamp(ts_str):
     if not isinstance(ts_str, str): return pd.NaT
-    match = re.match(r'(\d{2}/\d{2})\s(\d{2}:\d{2})', ts_str)
-    if match: return pd.to_datetime(f"2025/{match.group(1)} {match.group(2)}", errors='coerce')
-    if 'T' in ts_str: return pd.to_datetime(ts_str, errors='coerce')
-    return pd.to_datetime(ts_str, errors='coerce')
+    value = ts_str.strip()
+    # Match the whole value, including seconds and offset. Never discard a
+    # suffix: validate_predictions must still see any parsed timezone.
+    clock = r'[0-9]{2}:[0-9]{2}(?::[0-9]{2}(?:\.[0-9]{1,9})?)?'
+    zone = r'(?:Z|[+-](?:[01][0-9]|2[0-3]):?[0-5][0-9])?'
+    if re.fullmatch(r'[0-9]{2}/[0-9]{2}\s' + clock + zone, value):
+        value = '2025/' + value
+    elif not re.fullmatch(
+        r'[0-9]{4}(?:-[0-9]{2}-[0-9]{2}|/[0-9]{2}/[0-9]{2})'
+        r'(?:[T\s]' + clock + zone + r')?', value
+    ):
+        return pd.NaT
+    return pd.to_datetime(value, errors='coerce')
 
-def main():
-    print("🚀 [Step 1] 啟動資料生成 pipeline...")
-    
+def build_frame(db_path, stock_csv):
+    """驗證並計算 21 個日曆日；主 DB 唯讀、不寫結果，WAL 可產生側檔。"""
     # 1. 讀取情緒資料 (含假日)
-    conn = sqlite3.connect(DB_PATH)
-    df_sent = pd.read_sql_query("SELECT timestamp, label_id FROM ai_model_predictions_v2_push_only WHERE label_id IS NOT NULL", conn)
-    conn.close()
-    
-    df_sent['datetime'] = df_sent['timestamp'].apply(fix_timestamp)
-    df_sent.dropna(subset=['datetime'], inplace=True)
-    df_sent['Date'] = df_sent['datetime'].dt.date
+    df_sent = validate_predictions(read_predictions(db_path), fix_timestamp, ALL_DATES)
     
     # 2. 統計每日計數
     daily = df_sent.groupby(['Date', 'label_id']).size().unstack(fill_value=0)
@@ -52,10 +56,8 @@ def main():
     daily.index = pd.to_datetime(daily.index)
     
     # 3. 讀取並合併股價
-    df_stock = pd.read_csv(STOCK_CSV, usecols=['Date', '收盤價'], encoding='cp950')
-    df_stock['Date'] = pd.to_datetime(df_stock['Date'], format='%Y/%m/%d')
-    df_stock = df_stock.set_index('Date')
-    df_stock['R_daily'] = df_stock['收盤價'].pct_change()
+    df_stock = read_stock(stock_csv, ALL_DATES)
+    df_stock['R_daily'] = df_stock['收盤價'].pct_change(fill_method=None)
     df_stock['Cumulative_Return'] = (1 + df_stock['R_daily'].fillna(0)).cumprod() - 1
     
     # 合併 (Left join 保留假日情緒)
@@ -75,9 +77,17 @@ def main():
     df_final['Vol_Ratio'] = df_final['Total'] / p1_avg_vol # 量能倍數
     df_final['Total_Surge'] = df_final['Total'].diff()     # 量能變化
     
-    # 存檔
-    df_final.to_csv(OUTPUT_CSV)
-    print(f"✅ 資料已生成：{OUTPUT_CSV} (共 {len(df_final)} 天)")
+    return df_final
+
+
+def main(db_path=None, stock_csv=None, output_csv=None):
+    print("🚀 [Step 1] 啟動資料生成 pipeline...")
+    df_final = build_frame(db_path or DB_PATH, stock_csv or STOCK_CSV)
+    output = Path(output_csv or OUTPUT_CSV)
+    write_new_outputs([(output, df_final.to_csv(lineterminator="\n"))],
+                      sources=[db_path or DB_PATH, stock_csv or STOCK_CSV])
+    print(f"✅ 資料已生成：{output} (共 {len(df_final)} 天)")
+    return df_final
 
 if __name__ == "__main__":
     main()

@@ -1,6 +1,12 @@
 # 🚀 快速啟動指南
 
-## 5 分鐘快速上手
+## 先選擇驗證範圍
+
+乾淨 clone 不含研究用 DB、CSV、模型權重。若要先確認程式可離線執行，請依 [離線重現說明](docs/offline-reproducibility.md) 安裝最小依賴並執行合成資料 demo；它不會重訓、爬資料或重現論文分數。該文件也提供不寫入結果的 `--check-only` 與資料格式契約。
+
+以下為既有完整環境與標註工具路線，需另外準備本機資料；本次離線工程驗證未測 Web／桌面 UI。`requirements.txt` 包含大型模型套件，僅跑 pipeline／測試時改用 `requirements-offline.txt`。
+
+## 完整環境啟動
 
 ### 1. 安裝依賴
 
